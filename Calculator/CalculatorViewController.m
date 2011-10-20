@@ -10,6 +10,31 @@
 
 @implementation CalculatorViewController
 
+- (CalculatorBrain *)brain
+{
+    if (!brain) brain = [[CalculatorBrain alloc] init];
+    return brain; 
+}
+
+- (IBAction)digitPressed:(UIButton *)sender{
+    NSString *digit = [[sender titleLabel] text];
+    if (userIsInTheMiddleOfTypingANumber) {
+        [display setText:[[display text] stringByAppendingString:digit]]; 
+    }else{
+        [display setText:digit];
+        userIsInTheMiddleOfTypingANumber = YES; 
+    }
+}
+- (IBAction)operatorPressed:(UIButton *)sender{
+    if (userIsInTheMiddleOfTypingANumber) {
+        [[self brain] setOperand:[[display text] doubleValue]];
+        userIsInTheMiddleOfTypingANumber = NO;
+    }
+    NSString *operation = [[sender titleLabel] text];
+    double result = [[self brain] performOperation:operation];
+    [display setText:[NSString stringWithFormat:@"%g", result]];
+}
+
 - (void)didReceiveMemoryWarning
 {
     // Releases the view if it doesn't have a superview.
